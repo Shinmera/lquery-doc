@@ -15,4 +15,4 @@
   :license "Artistic"
   :description "An lQuery extension to easily create documentation for packages."
   :components ((:file "lquery-doc"))
-  :depends-on (:lquery :alexandria :cxml :cxml-dom))
+  :depends-on (:lquery :alexandria :cxml))
