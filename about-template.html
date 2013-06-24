@@ -1,0 +1,91 @@
+<!--
+  This file is a part of lQuery-Doc
+  (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
+  Author: Nicolas Hafner <shinmera@tymoon.eu>
+  !-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>lQuery-Doc - About</title>
+    <style type="text/css">
+      code{font-family: Consolas, Inconsolata, monospace;}
+      h3{display: inline-block;margin:0;padding:0;}
+      #funcs{list-style: none;}
+      #funcs li{margin-bottom: 20px;}
+      #funcs p{margin: 0 0 0 10px;}
+    </style>
+  </head>
+  <body>
+    <header>
+      <img src="http://shinmera.tymoon.eu/public/lquery-doc-logo.png" alt="lQuery-Doc"/>
+      <h1>v1.0.1</h1>
+    </header>
+    <div id="content">
+      <article>
+        <header><h2>What is lQuery-Doc?</h2></header>
+        <p>
+          lQuery-Doc is a utility to automate documentation file generation for Common Lisp packages. It uses lQuery to modify an HTML file and add information for functions, macros, methods and so on. The information used to generate this file is obtained through symbol inspection and docstrings. Thanks to Edi Weitz' <a href="http://weitz.de/documentation-template/">Documentation-Template</a> for inspiration and hints.
+        </p>
+      </article>
+      <article>
+        <header><h2>How To</h2></header>
+        <p>
+          Load lQuery-Doc with ASDF or Quicklisp.
+        </p>
+        <code>(ql:quickload :lquery-doc)</code>
+        <p>
+          In order to compile the documentation for a package, an HTML template and some selectors are required. The HTML template file should contain one block that will be emptied and filled with blocks containing the actual documentation. It further requires a base block that will be used to form a documentation block for each symbol/object. This base block can (by default) be filled with the name, type, description and eventually the arguments of the symbol at hand. As such, lQuery-Doc also asks you to specify selectors for the location where this information should be filled in. None of these are required and will simply default to <code>.funcname</code> <code>.functype</code> <code>.funcdesc</code> and <code>.funcargs</code> respectively.
+        </p>
+        <p>
+          Any symbol can be explicitely excluded from the documentation, or by exclusion of type. To do this, include the symbol into the <code>:exclude</code> key argument of <code>write-documentation</code>. The following special exclusion symbols are recognized: <code>:external</code>, <code>:internal</code>, <code>:inherited</code>, <code>:missing-docstring</code>, <code>:function</code>, <code>:macro</code>, <code>:generic</code>, <code>:method</code>, <code>:constant</code>, <code>:special</code>. By default, all internal symbols are excluded.
+        </p>
+        <p>A typical call to <code>write-documentation</code> might look something like this:</p>
+        <code>(write-documentation :package #p"/path/to/template.html" :output-file #p"/path/to/output.html" :exclude '(:internal :method))</code>
+        <p>In case you want to fill in information into multiple fields, use different selectors or leave something out:</p>
+        <code>(write-documentation :package #p"/path/to/template.html" :output-file #p"/path/to/output.html" :exclude '(:internal :method) <i>:fields '(:name ("h4" ".name") :desc (".description") :type (".type"))</i>)</code>
+      </article>
+      <article>
+        <header><h2>Changing lQuery-Doc Behaviour</h2></header>
+        <p>
+          Sometimes some more fine-grain control is desired (for example adding anchors isn't possible with the default setup). To get control over each documentation node and modify some things by hand, you can either override the <code>documentate-object</code> method directly, or add an <code>:after</code> specializer method. To add the above mentioned functionality, this code snippet would be sufficient:
+        </p>
+        <pre><code>(defmethod documentate-object :after (template object fields)
+  ($ template ".anchor" (attr :name (symbol-name (nth 0 object)))))</code></pre>
+        <p>
+          Of course, we could generalize on this use by reading the anchor selector from the <code>fields</code> plist and add more extensions, but this is good enough for a quick fix to demonstrate it. The <code>template</code> object that is passed into the method is always the current <code>dom:node</code> instance to work on. The <code>object</code> variable is the result returned from <code>get-symbol-info</code> and as such is a list containing (in order): <code>symbol</code>, <code>type</code>, <code>scope</code>, <code>docstring</code>, <code>arguments list</code>.
+        </p>
+        <p>
+          Alternatively, the whole <code>documentate-object</code> function can be bypassed by supplying <code>write-documentation</code> with the <code>:modifier</code> argument. It expects a function that takes the same three arguments as above. This is useful if you want to write your own way of modifying lQuery-Doc's behaviour differently for multiple packages or files.
+        </p>
+      </article>
+      <article>
+        <header><h2>Other Guff</h2></header>
+        <p>
+          lQuery-Doc is a sub-project of TyNETv5 ("Radiance"), licensed under the <a href="http://www.gnu.org/licenses/gpl-3.0.html">GPLv3</a> and &#169;2013 TymoonNET/NexT, <a href="http://shinmera.com">Nicolas Hafner</a>.<br />
+          This program can be obtained via git on <a href="git://git.tymoon.eu/lquery-doc.git">git://git.tymoon.eu/lquery-doc.git</a>. For questions, patches or suggestions, please contact me via <a href="mailto:shinmera@tymoon.eu">email</a>.
+        </p>
+      </article>
+      <article>
+        <header><h2>Package Function Index</h2></header>
+        <ul id="docs">
+          <li id="template">
+            <a name="" class="anchor"></a>
+            <article>
+              <header>
+                <span class="functype">test</span>
+                <code>
+                  <h3 class="funcname">Foo</h3>
+                  <span class="funcargs">()</span>
+                </code>
+              </header>
+              <p class="funcdesc">
+                Foobar
+              </p>
+            </article>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </body>
+</html>
