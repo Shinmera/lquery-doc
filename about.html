@@ -68,23 +68,6 @@
       <article>
         <header><h2>Package Function Index</h2></header>
         <ul id="docs"><li id="template">
-            <a class="anchor" name="DOCUMENTATE"/>
-            <article>
-              <header>
-                <span class="functype">EXTERNAL FUNCTION</span>
-                <code>
-                  <h3 class="funcname">DOCUMENTATE</h3>
-                  <span class="funcargs">(TEMPLATE PACKAGE &amp;KEY
- (FIELDS
-  '(NAME (.funcname) DESC (.funcdesc) ARGS (.funcargs) TYPE (.functype)))
- (EXCLUDE '(INTERNAL)) (MODIFIER #'DOCUMENTATE-OBJECT))</span>
-                </code>
-              </header>
-              <p class="funcdesc">Create a list of documentation blocks using the template node. The data is filled into the fields selected by the targets. Targets is a plist with :name, :desc, :args and :type as keys and lists of selectors as values. Any symbol in the exclude list will be skipped. Alternatively, the following symbols allow for more general exclusion: :internal :external :inherited :constant :special :class :function :macro :generic :method :missing-docstring.
-
-It is expected that lQuery has already been initialized.</p>
-            </article>
-          </li><li id="template">
             <a class="anchor" name="DOCUMENTATE-OBJECT"/>
             <article>
               <header>
