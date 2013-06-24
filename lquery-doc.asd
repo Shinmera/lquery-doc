@@ -12,7 +12,7 @@
   :name "lQuery-Doc"
   :version "1.0.1"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
-  :license "LLGPL"
+  :license "GPLv3"
   :description "An lQuery extension to easily create documentation for packages."
   :components ((:file "lquery-doc"))
   :depends-on (:lquery :alexandria :cxml :cxml-dom))
