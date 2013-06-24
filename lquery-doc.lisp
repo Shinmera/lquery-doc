@@ -11,7 +11,6 @@
         #+:allegro :mop)
   (:nicknames :lquery-doc)
   (:export :write-documentation
-           :documentate
            :documentate-object
            :get-symbol-info))
 (in-package :org.tymoonnext.radiance.lib.lquery.doc)
@@ -62,6 +61,9 @@ It is expected that lQuery has already been initialized."
                                     (not (find type exclude))
                                     (not (and (find :missing-docstring exclude) (not docstring))))
                                (funcall modifier target object fields)))))))
+
+(defgeneric documentate-object (template object fields)
+  (:documentation "Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields."))
 
 (defmethod documentate-object (template object fields)
   "Create a filled documentation template for the specified object."
