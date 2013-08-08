@@ -47,7 +47,8 @@
   "Create a list of documentation blocks using the template node. The data is filled into the fields selected by the targets. Targets is a plist with :name, :desc, :args and :type as keys and lists of selectors as values. Any symbol in the exclude list will be skipped. Alternatively, the following symbols allow for more general exclusion: :internal :external :inherited :constant :special :class :function :macro :generic :method :missing-docstring.
 
 It is expected that lQuery has already been initialized."
-  (let ((template (first (lquery::nodes-or-build template))))
+  (let ((template (first (lquery-funcs::nodes-or-build template)))
+        (*package* (find-package package)))
     (alexandria:flatten
      (loop for symbol in (sort (get-all-symbols package) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
         collect (loop for object in (get-symbol-info symbol)
@@ -69,7 +70,7 @@ It is expected that lQuery has already been initialized."
   "Create a filled documentation template for the specified object."
   (let ((vars (list :name (symbol-name (nth 0 object))
                     :desc (format NIL "~a" (nth 3 object))
-                    :args (format NIL "~a" (nth 4 object))
+                    :args (format NIL "~s" (nth 4 object))
                     :type (format NIL "~a ~a" (nth 2 object) (nth 1 object)))))
     (loop for (key val) on fields by #'cddr
          do (loop for field in val

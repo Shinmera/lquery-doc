@@ -10,7 +10,7 @@
 
 (defsystem lquery-doc
   :name "lQuery-Doc"
-  :version "1.0.1"
+  :version "1.0.2"
   :author "Nicolas Hafner <shinmera@tymoon.eu>"
   :license "Artistic"
   :description "An lQuery extension to easily create documentation for packages."
