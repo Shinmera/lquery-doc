@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<!--
+<!DOCTYPE html><!--
   This file is a part of lQuery-Doc
   (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
   Author: Nicolas Hafner <shinmera@tymoon.eu>
@@ -10,15 +9,15 @@
     <style type="text/css">
       code{font-family: Consolas, Inconsolata, monospace;}
       h3{display: inline-block;margin:0;padding:0;}
-      #funcs{list-style: none;}
-      #funcs li{margin-bottom: 20px;}
-      #funcs p{margin: 0 0 0 10px;}
+      #docs{list-style: none;}
+      #docs li{margin-bottom: 20px;}
+      #docs pre{margin: 0 0 0 10px; white-space: pre-wrap;}
     </style>
   </head>
   <body>
     <header>
       <img src="http://shinmera.tymoon.eu/public/lquery-doc-logo.png" alt="lQuery-Doc"/>
-      <h1>v1.0.1</h1>
+      <h1>v1.0.2</h1>
     </header>
     <div id="content">
       <article>
@@ -77,7 +76,7 @@
                   <span class="funcargs">(TEMPLATE OBJECT FIELDS)</span>
                 </code>
               </header>
-              <p class="funcdesc">Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields.</p>
+              <pre class="funcdesc">Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields.</pre>
             </article>
           </li><li id="template">
             <a class="anchor" name="GET-SYMBOL-INFO"/>
@@ -89,7 +88,7 @@
                   <span class="funcargs">(SYMBOL)</span>
                 </code>
               </header>
-              <p class="funcdesc">Gets all necessary information for the symbol. Returns a list containing symbol, type, docstring and args.</p>
+              <pre class="funcdesc">Gets all necessary information for the symbol. Returns a list containing symbol, type, docstring and args.</pre>
             </article>
           </li><li id="template">
             <a class="anchor" name="WRITE-DOCUMENTATION"/>
@@ -98,15 +97,16 @@
                 <span class="functype">EXTERNAL FUNCTION</span>
                 <code>
                   <h3 class="funcname">WRITE-DOCUMENTATION</h3>
-                  <span class="funcargs">(PACKAGE INPUT-FILE &amp;KEY (OUTPUT-FILE INPUT-FILE) (TARGET #docs)
- (TEMPLATE #template)
+                  <span class="funcargs">(PACKAGE INPUT-FILE &amp;KEY (OUTPUT-FILE INPUT-FILE) (TARGET "#docs")
+ (TEMPLATE "#template")
  (FIELDS
-  '(NAME (.funcname) DESC (.funcdesc) ARGS (.funcargs) TYPE (.functype)))
- (EXCLUDE '(INTERNAL)) (MODIFIER #'DOCUMENTATE-OBJECT) (IF-EXISTS SUPERSEDE)
- (IF-DOES-NOT-EXIST CREATE))</span>
+  '(:NAME (".funcname") :DESC (".funcdesc") :ARGS (".funcargs") :TYPE
+    (".functype")))
+ (EXCLUDE '(:INTERNAL)) (MODIFIER #'DOCUMENTATE-OBJECT) (IF-EXISTS :SUPERSEDE)
+ (IF-DOES-NOT-EXIST :CREATE))</span>
                 </code>
               </header>
-              <p class="funcdesc">Writes the documentation for a package into the specified HTML file and writes it back out. target denotes a selector for a container for the resulting HTML nodes. It is emptied before filling. Template is a selector to the template to use for the documentation. The rest is explained in the documentate function.</p>
+              <pre class="funcdesc">Writes the documentation for a package into the specified HTML file and writes it back out. target denotes a selector for a container for the resulting HTML nodes. It is emptied before filling. Template is a selector to the template to use for the documentation. The rest is explained in the documentate function.</pre>
             </article>
           </li></ul>
       </article>
