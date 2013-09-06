@@ -86,7 +86,7 @@ It is expected that lQuery has already been initialized."
                      type
                      (symbol-scope symbol)
                      (get-docstring-of-symbol symbol type)
-                     (get-args-of-symbol symbol)) into result
+                     (if (fboundp symbol) (get-args-of-symbol symbol))) into result
        finally (setf info result))
     ;Special handling for methods
     (if (find :generic types)
@@ -129,11 +129,10 @@ It is expected that lQuery has already been initialized."
   (let ((lst ())
         (package (find-package package)))
     (do-all-symbols (s lst)
-      (when (fboundp s)
-        (if package
-            (when (eql (symbol-package s) package)
-              (push s lst))
-            (push s lst))))
+      (if package
+          (when (eql (symbol-package s) package)
+            (push s lst))
+          (push s lst)))
     lst))
 
 (defun symbol-constant-p (symbol)
