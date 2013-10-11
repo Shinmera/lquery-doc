@@ -69,8 +69,10 @@ It is expected that lQuery has already been initialized."
 (defmethod documentate-object (template object fields)
   "Create a filled documentation template for the specified object."
   (let ((vars (list :name (symbol-name (nth 0 object))
-                    :desc (format NIL "~a" (nth 3 object))
-                    :args (format NIL "~s" (nth 4 object))
+                    :desc (format NIL "~:[~;~:*~a~]" (nth 3 object))
+                    :args (if (find (nth 1 object) '(:function :macro :method :generic))
+                              (format NIL "~:[()~;~:*~s~]" (nth 4 object))
+                              "")
                     :type (format NIL "~a ~a" (nth 2 object) (nth 1 object)))))
     (loop for (key val) on fields by #'cddr
          do (loop for field in val
