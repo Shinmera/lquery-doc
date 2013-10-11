@@ -9,6 +9,7 @@
         #+:lispworks :clos
         #+:sbcl :sb-mop
         #+:allegro :mop)
+  #+:sbcl (:import-from :sb-pcl :object)
   (:nicknames :lquery-doc)
   (:export :write-documentation
            :documentate-object
@@ -100,7 +101,7 @@ It is expected that lQuery has already been initialized."
                            (loop with args = (get-args-of-symbol symbol)
                               for i from 0 below (length args)
                               for specialiser in (method-specializers method)
-                              do (setf (nth i args) (list (nth i args) specialiser))
+                              do (setf (nth i args) (list (nth i args) (class-name specialiser)))
                               finally (return args))) into result
              finally (setf info (append info result))))
     info))
