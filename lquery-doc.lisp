@@ -97,7 +97,11 @@ It is expected that lQuery has already been initialized."
                            :method
                            (symbol-scope symbol)
                            (documentation method T)
-                           (append (get-args-of-symbol symbol) (method-specializers method))) into result
+                           (loop with args = (get-args-of-symbol symbol)
+                              for i from 0 below (length args)
+                              for specialiser in (method-specializers method)
+                              do (setf (nth i args) (list (nth i args) specialiser))
+                              finally (return args))) into result
              finally (setf info (append info result))))
     info))
 
