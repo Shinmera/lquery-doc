@@ -5,12 +5,10 @@
 |#
 
 (defpackage org.tymoonnext.radiance.lib.lquery.doc
-  (:use :cl :lquery :cxml-dom :alexandria
-        #+:lispworks :clos
-        #+:sbcl :sb-mop
-        #+:allegro :mop)
-  #+:sbcl (:import-from :sb-pcl :object)
+  (:use :cl :lquery :cxml-dom :alexandria :closer-mop)
   (:nicknames :lquery-doc)
+  (:shadowing-import-from
+   :cl :defmethod :defgeneric :standard-generic-function)
   (:export :write-documentation
            :documentate-object
            :get-symbol-info))
@@ -111,10 +109,8 @@ It is expected that lQuery has already been initialized."
 
 (defun get-args-of-symbol (symbol)
   "Retrieves the arguments of a symbol as a list."
-  #+:sbcl
-  (sb-introspect:function-lambda-list symbol)
-  #+:allegro
-  (excl:arglist symbol))
+  #+:sbcl (sb-introspect:function-lambda-list symbol)
+  #+:allegro (excl:arglist symbol))
 
 (defun get-docstring-of-symbol (symbol type)
   "Retrieves the docstring of a symbol of a given type."
