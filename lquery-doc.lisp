@@ -49,18 +49,18 @@ It is expected that lQuery has already been initialized."
   (let ((template (first (lquery-funcs::nodes-or-build template)))
         (*package* (find-package package)))
     (alexandria:flatten
-     (loop for symbol in (sort (get-all-symbols package) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
-        collect (loop for object in (get-symbol-info symbol)
-                   for type = (nth 1 object)
-                   for scope = (nth 2 object)
-                   for docstring = (nth 3 object)
-                   for args = (nth 4 object)
-                   for target = (dom:clone-node template T)
-                   collect (if (and (not (find symbol exclude))
-                                    (not (find scope exclude))
-                                    (not (find type exclude))
-                                    (not (and (find :missing-docstring exclude) (not docstring))))
-                               (funcall modifier target object fields)))))))
+     (loop for symbol in (sort (remove-duplicates (get-all-symbols package)) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
+           collect (loop for object in (get-symbol-info symbol)
+                         for type = (nth 1 object)
+                         for scope = (nth 2 object)
+                         for docstring = (nth 3 object)
+                         for args = (nth 4 object)
+                         for target = (dom:clone-node template T)
+                         collect (if (and (not (find symbol exclude))
+                                          (not (find scope exclude))
+                                          (not (find type exclude))
+                                          (not (and (find :missing-docstring exclude) (not docstring))))
+                                     (funcall modifier target object fields)))))))
 
 (defgeneric documentate-object (template object fields)
   (:documentation "Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields."))
@@ -70,7 +70,7 @@ It is expected that lQuery has already been initialized."
   (let ((vars (list :name (symbol-name (nth 0 object))
                     :desc (format NIL "~:[~;~:*~a~]" (nth 3 object))
                     :args (if (find (nth 1 object) '(:function :macro :method :generic))
-                              (format NIL "~:[()~;~:*~s~]" (nth 4 object))
+                              (format NIL "~:[()~;~:*~a~]" (nth 4 object))
                               "")
                     :type (format NIL "~a ~a" (nth 2 object) (nth 1 object)))))
     (loop for (key val) on fields by #'cddr
@@ -83,12 +83,12 @@ It is expected that lQuery has already been initialized."
   (let ((types (get-types-of-symbol symbol))
         (info ()))
     (loop for type in types
-       collect (list symbol
-                     type
-                     (symbol-scope symbol)
-                     (get-docstring-of-symbol symbol type)
-                     (if (fboundp symbol) (get-args-of-symbol symbol))) into result
-       finally (setf info result))
+          collect (list symbol
+                        type
+                        (symbol-scope symbol)
+                        (get-docstring-of-symbol symbol type)
+                        (if (fboundp symbol) (get-args-of-symbol symbol))) into result
+          finally (setf info result))
     ;Special handling for methods
     (if (find :generic types)
         (loop for method in (generic-function-methods (fdefinition symbol))
@@ -124,11 +124,11 @@ It is expected that lQuery has already been initialized."
 (defun get-types-of-symbol (symbol)
   "Retrieves a list of all types of objects this symbol can represent."
   (remove NIL `(,(when (symbol-constant-p symbol) :constant)
-                 ,(when (symbol-special-p symbol) :special)
-                 ,(when (symbol-class-p symbol) :class)
-                 ,(when (symbol-macro-p symbol) :macro)
-                 ,(when (symbol-generic-p symbol) :generic)
-                 ,(when (symbol-function-p symbol) :function))))
+                ,(when (symbol-special-p symbol) :special)
+                ,(when (symbol-class-p symbol) :class)
+                ,(when (symbol-macro-p symbol) :macro)
+                ,(when (symbol-generic-p symbol) :generic)
+                ,(when (symbol-function-p symbol) :function))))
 
 (defun get-all-symbols (&optional package)
   "Gets all symbols within a package."
