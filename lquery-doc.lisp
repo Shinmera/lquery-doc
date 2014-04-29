@@ -4,7 +4,7 @@
   Author: Nicolas Hafner <shinmera@tymoon.eu>
 |#
 
-(defpackage org.tymoonnext.radiance.lib.lquery.doc
+(defpackage org.tymoonnext.radiance.lib.lquery-doc
   (:use :cl :lquery :cxml-dom :alexandria :closer-mop)
   (:nicknames :lquery-doc)
   (:shadowing-import-from
@@ -12,7 +12,7 @@
   (:export :write-documentation
            :documentate-object
            :get-symbol-info))
-(in-package :org.tymoonnext.radiance.lib.lquery.doc)
+(in-package :org.tymoonnext.radiance.lib.lquery-doc)
 
 (defun write-documentation (package input-file
                             &key
