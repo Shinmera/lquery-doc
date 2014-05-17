@@ -5,7 +5,7 @@
 |#
 
 (defpackage org.tymoonnext.radiance.lib.lquery-doc
-  (:use :cl :lquery :cxml-dom :alexandria :closer-mop)
+  (:use :cl :lquery :alexandria :closer-mop)
   (:nicknames :lquery-doc)
   (:shadowing-import-from
    :cl :defmethod :defgeneric :standard-generic-function)
@@ -46,7 +46,7 @@
   "Create a list of documentation blocks using the template node. The data is filled into the fields selected by the targets. Targets is a plist with :name, :desc, :args and :type as keys and lists of selectors as values. Any symbol in the exclude list will be skipped. Alternatively, the following symbols allow for more general exclusion: :internal :external :inherited :constant :special :class :function :macro :generic :method :missing-docstring.
 
 It is expected that lQuery has already been initialized."
-  (let ((template (aref (lquery-funcs::nodes-or-build template) 0))
+  (let ((template (aref (lquery::nodes-or-build template) 0))
         (*package* (find-package package)))
     (loop with result = (make-array 0 :adjustable T :fill-pointer 0)
           for symbol in (sort (remove-duplicates (get-all-symbols package)) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
