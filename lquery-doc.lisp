@@ -46,21 +46,20 @@
   "Create a list of documentation blocks using the template node. The data is filled into the fields selected by the targets. Targets is a plist with :name, :desc, :args and :type as keys and lists of selectors as values. Any symbol in the exclude list will be skipped. Alternatively, the following symbols allow for more general exclusion: :internal :external :inherited :constant :special :class :function :macro :generic :method :missing-docstring.
 
 It is expected that lQuery has already been initialized."
-  (let ((template (first (lquery-funcs::nodes-or-build template)))
+  (let ((template (aref (lquery-funcs::nodes-or-build template) 0))
         (*package* (find-package package)))
-    (alexandria:flatten
-     (loop for symbol in (sort (remove-duplicates (get-all-symbols package)) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
-           collect (loop for object in (get-symbol-info symbol)
-                         for type = (nth 1 object)
-                         for scope = (nth 2 object)
-                         for docstring = (nth 3 object)
-                         for args = (nth 4 object)
-                         for target = (dom:clone-node template T)
-                         collect (if (and (not (find symbol exclude))
-                                          (not (find scope exclude))
-                                          (not (find type exclude))
-                                          (not (and (find :missing-docstring exclude) (not docstring))))
-                                     (funcall modifier target object fields)))))))
+    (loop with result = (make-array 0 :adjustable T :fill-pointer 0)
+          for symbol in (sort (remove-duplicates (get-all-symbols package)) #'string-lessp :key (lambda (a) (format NIL "~a" a)))
+          do (loop for object in (get-symbol-info symbol)
+                   for (noop type scope docstring args) = object
+                   for target = (plump:clone-node template :deep T)
+                   do (when (and (not (find symbol exclude))
+                                 (not (find scope exclude))
+                                 (not (find type exclude))
+                                 (not (and (find :missing-docstring exclude) (not docstring))))
+                        (let ((item (funcall modifier target object fields)))
+                          (when item (vector-push-extend item result)))))
+          finally (return result))))
 
 (defgeneric documentate-object (template object fields)
   (:documentation "Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields."))
@@ -74,8 +73,8 @@ It is expected that lQuery has already been initialized."
                               "")
                     :type (format NIL "~a ~a" (nth 2 object) (nth 1 object)))))
     (loop for (key val) on fields by #'cddr
-         do (loop for field in val
-                 do ($ template field (text (getf vars key))))))
+          do (loop for field in val
+                   do ($ template field (text (getf vars key))))))
   template)
 
 (defun get-symbol-info (symbol)
