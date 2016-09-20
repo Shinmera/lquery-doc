@@ -1,115 +1,79 @@
-<!DOCTYPE html><!--
-  This file is a part of lQuery-Doc
-  (c) 2013 TymoonNET/NexT http://tymoon.eu (shinmera@tymoon.eu)
-  Author: Nicolas Hafner <shinmera@tymoon.eu>
-  !--><html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8"/>
-    <title>lQuery-Doc - About</title>
-    <style type="text/css">
-      code{font-family: Consolas, Inconsolata, monospace;}
-      h3{display: inline-block;margin:0;padding:0;}
-      #docs{list-style: none;}
-      #docs li{margin-bottom: 20px;}
-      #docs pre{margin: 0 0 0 10px; white-space: pre-wrap;}
-    </style>
-  </head>
-  <body>
-    <header>
-      <img src="http://shinmera.tymoon.eu/public/lquery-doc-logo.png" alt="lQuery-Doc"/>
-      <h1>v1.0.2</h1>
-    </header>
-    <div id="content">
-      <article>
-        <header><h2>What is lQuery-Doc?</h2></header>
-        <p>
-          lQuery-Doc is a utility to automate documentation file generation for Common Lisp packages. It uses lQuery to modify an HTML file and add information for functions, macros, methods and so on. The information used to generate this file is obtained through symbol inspection and docstrings. Thanks to Edi Weitz' <a href="http://weitz.de/documentation-template/">Documentation-Template</a> for inspiration and hints.
-        </p>
-      </article>
-      <article>
-        <header><h2>How To</h2></header>
-        <p>
-          Load lQuery-Doc with ASDF or Quicklisp.
-        </p>
-        <code>(ql:quickload :lquery-doc)</code>
-        <p>
-          In order to compile the documentation for a package, an HTML template and some selectors are required. The HTML template file should contain one block that will be emptied and filled with blocks containing the actual documentation. It further requires a base block that will be used to form a documentation block for each symbol/object. This base block can (by default) be filled with the name, type, description and eventually the arguments of the symbol at hand. As such, lQuery-Doc also asks you to specify selectors for the location where this information should be filled in. None of these are required and will simply default to <code>.funcname</code> <code>.functype</code> <code>.funcdesc</code> and <code>.funcargs</code> respectively.
-        </p>
-        <p>
-          Any symbol can be explicitely excluded from the documentation, or by exclusion of type. To do this, include the symbol into the <code>:exclude</code> key argument of <code>write-documentation</code>. The following special exclusion symbols are recognized: <code>:external</code>, <code>:internal</code>, <code>:inherited</code>, <code>:missing-docstring</code>, <code>:function</code>, <code>:macro</code>, <code>:generic</code>, <code>:method</code>, <code>:constant</code>, <code>:special</code>. By default, all internal symbols are excluded.
-        </p>
-        <p>A typical call to <code>write-documentation</code> might look something like this:</p>
-        <code>(write-documentation :package #p"/path/to/template.html" :output-file #p"/path/to/output.html" :exclude '(:internal :method))</code>
-        <p>In case you want to fill in information into multiple fields, use different selectors or leave something out:</p>
-        <code>(write-documentation :package #p"/path/to/template.html" :output-file #p"/path/to/output.html" :exclude '(:internal :method) <i>:fields '(:name ("h4" ".name") :desc (".description") :type (".type"))</i>)</code>
-      </article>
-      <article>
-        <header><h2>Changing lQuery-Doc Behaviour</h2></header>
-        <p>
-          Sometimes some more fine-grain control is desired (for example adding anchors isn't possible with the default setup). To get control over each documentation node and modify some things by hand, you can either override the <code>documentate-object</code> method directly, or add an <code>:after</code> specializer method. To add the above mentioned functionality, this code snippet would be sufficient:
-        </p>
-        <pre><code>(defmethod documentate-object :after (template object fields)
-  ($ template ".anchor" (attr :name (symbol-name (nth 0 object)))))</code></pre>
-        <p>
-          Of course, we could generalize on this use by reading the anchor selector from the <code>fields</code> plist and add more extensions, but this is good enough for a quick fix to demonstrate it. The <code>template</code> object that is passed into the method is always the current <code>dom:node</code> instance to work on. The <code>object</code> variable is the result returned from <code>get-symbol-info</code> and as such is a list containing (in order): <code>symbol</code>, <code>type</code>, <code>scope</code>, <code>docstring</code>, <code>arguments list</code>.
-        </p>
-        <p>
-          Alternatively, the whole <code>documentate-object</code> function can be bypassed by supplying <code>write-documentation</code> with the <code>:modifier</code> argument. It expects a function that takes the same three arguments as above. This is useful if you want to write your own way of modifying lQuery-Doc's behaviour differently for multiple packages or files.
-        </p>
-      </article>
-      <article>
-        <header><h2>Other Guff</h2></header>
-        <p>
-          lQuery-Doc is a sub-project of TyNETv5 ("Radiance"), licensed under the <a href="http://opensource.org/licenses/Artistic-2.0">Artistic License 2.0</a> and ©2013 TymoonNET/NexT, <a href="http://shinmera.com">Nicolas Hafner</a>.<br/>
-          This program can be obtained via git on <a href="git://git.tymoon.eu/lquery-doc.git">git://git.tymoon.eu/lquery-doc.git</a>. For questions, patches or suggestions, please contact me via <a href="mailto:shinmera@tymoon.eu">email</a>.
-        </p>
-      </article>
-      <article>
-        <header><h2>Package Function Index</h2></header>
-        <ul id="docs"><li id="template">
-            <a class="anchor" name="DOCUMENTATE-OBJECT"/>
-            <article>
-              <header>
-                <span class="functype">EXTERNAL GENERIC</span>
-                <code>
-                  <h3 class="funcname">DOCUMENTATE-OBJECT</h3>
-                  <span class="funcargs">(TEMPLATE OBJECT FIELDS)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields.</pre>
-            </article>
-          </li><li id="template">
-            <a class="anchor" name="GET-SYMBOL-INFO"/>
-            <article>
-              <header>
-                <span class="functype">EXTERNAL FUNCTION</span>
-                <code>
-                  <h3 class="funcname">GET-SYMBOL-INFO</h3>
-                  <span class="funcargs">(SYMBOL)</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Gets all necessary information for the symbol. Returns a list containing symbol, type, docstring and args.</pre>
-            </article>
-          </li><li id="template">
-            <a class="anchor" name="WRITE-DOCUMENTATION"/>
-            <article>
-              <header>
-                <span class="functype">EXTERNAL FUNCTION</span>
-                <code>
-                  <h3 class="funcname">WRITE-DOCUMENTATION</h3>
-                  <span class="funcargs">(PACKAGE INPUT-FILE &amp;KEY (OUTPUT-FILE INPUT-FILE) (TARGET "#docs")
- (TEMPLATE "#template")
- (FIELDS
-  '(:NAME (".funcname") :DESC (".funcdesc") :ARGS (".funcargs") :TYPE
-    (".functype")))
- (EXCLUDE '(:INTERNAL)) (MODIFIER #'DOCUMENTATE-OBJECT) (IF-EXISTS :SUPERSEDE)
- (IF-DOES-NOT-EXIST :CREATE))</span>
-                </code>
-              </header>
-              <pre class="funcdesc">Writes the documentation for a package into the specified HTML file and writes it back out. target denotes a selector for a container for the resulting HTML nodes. It is emptied before filling. Template is a selector to the template to use for the documentation. The rest is explained in the documentate function.</pre>
-            </article>
-          </li></ul>
-      </article>
-    </div>
-  </body>
-</html>
+<!DOCTYPE html> <html xmlns="http://www.w3.org/1999/xhtml"> <head> <meta charset="utf-8"/> <title>Lquery-Doc</title> <meta name="viewport" content="width=device-width"/> <meta name="description" content="An lQuery extension to easily create documentation for packages."/> <meta name="author" content="Nicolas Hafner &lt;shinmera@tymoon.eu&gt;"/> <style type="text/css"> body{
+          max-width: 1024px;
+          margin: 0 auto 0 auto;
+          font-family: sans-serif;
+          color: #333333;
+          font-size: 14pt;
+          padding: 5px;
+      }
+
+      body>header{
+          display:flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          max-width: 100%;
+      }
+
+      img{
+          max-width: 100%;
+          max-height: 100%;
+      }
+
+      code{
+          font-family: Consolas, Inconsolata, monospace;
+      }
+
+      a{
+          text-decoration: none;
+          color: #0055AA;
+      }
+
+      #documentation{
+          text-align: justify;
+      }
+
+      #documentation pre{
+          margin-left: 20px;
+          overflow: auto;
+      }
+
+      #symbol-index>ul{
+          list-style: none;
+          padding: 0;
+      }
+      #symbol-index .package>ul{
+          list-style: none;
+          padding: 0 0 0 10px;
+      }
+      #symbol-index .package .nicknames{
+          font-weight: normal;
+      }
+      #symbol-index .package h4{
+          display: inline-block;
+          margin: 0;
+      }
+      #symbol-index .package article{
+          margin: 0 0 15px 0;
+      }
+      #symbol-index .package article header{
+          font-size: 1.2em;
+          font-weight: normal;
+      }
+      #symbol-index .package .name{
+          margin-right: 5px;
+      }
+      #symbol-index .package .docstring{
+          margin: 0 0 0 15px;
+          white-space: pre-wrap;
+          font-size: 12pt;
+      }
+
+      @media (max-width: 800px){
+          body{font-size: 12pt;}
+      } </style> </head> <body> <header> <h1>lquery-doc</h1> <span class="version">1.1.0</span> <p class="description">An lQuery extension to easily create documentation for packages.</p> </header> <main> <article id="documentation">  <div><h1>lquery-doc</h1> <p>A simple lQuery extension to easily create documentation for packages.</p> <p>See <a href="http://shinmera.tymoon.eu/public/lquery-doc-about.html">about.html</a> for documentation, examples and package index.</p> </div>  </article> <article id="copyright">  <h2>Copyright</h2> <span>lquery-doc</span> is licensed under the <span><a href="https://tldrlegal.com/search?q=Artistic">Artistic</a></span> license.  © <span>Nicolas Hafner &lt;shinmera@tymoon.eu&gt;</span> .    </article>  <article id="symbol-index"> <h2>Package Index</h2> <ul><li class="package"> <h3> <a name="ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC" href="#ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC">ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC</a> <span class="nicknames">(LQUERY-DOC)</span> </h3> <ul><li> <a name="ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:GET-SYMBOL-INFO"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:GET-SYMBOL-INFO">GET-SYMBOL-INFO</a></code></h4> <code class="qualifiers"></code> <code class="arguments">SYMBOL</code><code>)</code>  </header> <pre class="docstring">Gets all necessary information for the symbol. Returns a list containing symbol, type, docstring and args.</pre> </article> </li><li> <a name="ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:WRITE-DOCUMENTATION"> </a> <article> <header class="function"> <span class="type">function</span>  <code>(</code><h4 class="name"><code><a href="#ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:WRITE-DOCUMENTATION">WRITE-DOCUMENTATION</a></code></h4> <code class="qualifiers"></code> <code class="arguments">PACKAGE INPUT-FILE &amp;KEY (OUTPUT-FILE INPUT-FILE) (TARGET &quot;#docs&quot;)
+ (TEMPLATE &quot;#template&quot;)
+ (FIELDS '(:NAME (&quot;.funcname&quot;) :DESC (&quot;.funcdesc&quot;) :ARGS (&quot;.funcargs&quot;) :TYPE
+ (&quot;.functype&quot;)))
+ (EXCLUDE '(:INTERNAL)) (MODIFIER (FUNCTION DOCUMENTATE-OBJECT))
+ (IF-EXISTS :SUPERSEDE) (IF-DOES-NOT-EXIST :CREATE)</code><code>)</code>  </header> <pre class="docstring">Writes the documentation for a package into the specified HTML file and writes it back out. target denotes a selector for a container for the resulting HTML nodes. It is emptied before filling. Template is a selector to the template to use for the documentation. The rest is explained in the documentate function.</pre> </article> </li><li> <a name="ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:DOCUMENTATE-OBJECT"> </a> <article> <header class="generic"> <span class="type">generic</span>  <code>(</code><h4 class="name"><code><a href="#ORG.TYMOONNEXT.RADIANCE.LIB.LQUERY-DOC:DOCUMENTATE-OBJECT">DOCUMENTATE-OBJECT</a></code></h4> <code class="qualifiers"></code> <code class="arguments">TEMPLATE OBJECT FIELDS</code><code>)</code>  </header> <pre class="docstring">Changes the given template node to include all required information stored in object (see get-symbol-info) on the given fields.</pre> </article> </li></ul> </li></ul> </article>  </main> </body> </html> 
